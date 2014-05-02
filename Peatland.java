@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This package is designed to simulate a peatland on the Avalon peninsula on the 
+ * island of newfoundland. It is an individual based model used to examine
+ * population dynamics
  */
 package peatland;
 

@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class encapsulates the current state of the data matrix
  */
 package peatland;
 
@@ -15,12 +13,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Random;
 
-/**
- *
- * @author chris
- */
+
 public class simData {
-    /* Data is a double matrix representing the peatland
+    
+/* Data is a double matrix representing the peatland
      Row 0: Generation (1: gametophyte, 2: mature, 3: dung
      Row 1: Environmental suitability
      Row 2: Age
@@ -31,7 +27,6 @@ public class simData {
      Row 7: Spore Load of Ampullaceum
      Row 8: Spore Load of Pensylvanicum
      */
-
     private double[][] data;
 
     /*Contains a square matrix of distances between each row of data's coordinates
@@ -39,15 +34,19 @@ public class simData {
      */
     private double[][] distance;
 
+    /*
+    Instantiating a simData with a matrix of peatland values
+    automatically calculates interindividual euclidean distance
+    */
     public simData(double[][] data) {
         this.data = data;
         distanceMatrix();
     }
 
-    public simData() {
-
-    }
-
+    /*
+    Calculate the mean proportional coverage of Ampullaceum within mature populations
+    from within data matrix
+    */
     public double getMeanAmp() {
         int matures = 0;
         double runningTotal = 0;
@@ -62,6 +61,10 @@ public class simData {
         return runningTotal / matures;
     }
 
+    /*
+    Calculate the mean proportional coverage of Pensylvanicum within mature populations
+    from within data matrix    
+    */
     public double getMeanPens() {
         int matures = 0;
         double runningTotal = 0;
@@ -76,7 +79,9 @@ public class simData {
         return runningTotal / matures;
     }
 
-    /*This bit of code was grabbed from the internet and includes a try catch*/
+    /*
+    Outputs the contents of the data matrix to a file for analysis
+    */
     private void writeMatrixToFile(String file, double[][] data) {
         Writer writer = null;
 
@@ -110,7 +115,9 @@ public class simData {
         }
     }
 
-    // What a terrible method I just wrote, but it appears to work 
+    /*
+    Reads in a properly formatted file to a data matrix
+    */
     public static simData readFromFile(String file) {
         BufferedReader reader = null;
 
@@ -182,7 +189,7 @@ public class simData {
     }
 
     /*
-     Calculate the distance matrix, in this case euclidean
+     Calculate the distance matrix for all indivuals, in this case euclidean
      */
     private void distanceMatrix() {
         double[][] distM = new double[data.length][data.length];
@@ -198,6 +205,9 @@ public class simData {
         distance = distM;
     }
 
+    /*
+    Public access to calculate distance matrix
+    */
     public void calcDistanceMatrix() {
         distanceMatrix();
     }
@@ -286,8 +296,12 @@ public class simData {
                 double aContribution = data[myMoss][5] * ampPhenologyModifier * attractionFromAmp * ampYeild / (dist * dist); //*(dungAge+1));
                 double pContribution = data[myMoss][6] * pensPhenologyModifier * attractionFromPens * pensYeild / (dist * dist); //*(dungAge+1));
 
-                /*Supposing k=100 represents 1000 individuals, and 2 are required for mating
-                Require there to be at least 0.2 coverage to disperse spores*/
+                /*
+                Calculates an individual moss's spore contribution for both species
+                minViable coverage precludes reproduction below a given coverage
+                in essence saying too few to allow mating. The isNaN catch defends
+                against underflow errors previously generated
+                */
                 if (!Double.isNaN(aContribution) && data[myMoss][5] >= aMinViableCoverage) {
                     data[myDung][7] += aContribution;
                 }

@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class is the driver of the model, this class encapsulates an entire simulation
+ * with all interacting indivuals and tracks the current year, the run length, and
+ * output choices,
  */
 
 package peatland;
@@ -28,7 +28,9 @@ class peatlandSimulation {
     private String outputFolder;
     private int ncols = 9;
    
-    
+    /*
+    Instantiates a new simulation given all the simulation parameters manually
+    */
     public peatlandSimulation(String myName, simData myData, simParams myParams, String myOut, int y){
            data = myData;
            params = myParams;
@@ -38,6 +40,9 @@ class peatlandSimulation {
            this.generateStartingData(10, 10, 10, 10);
      }
     
+    /*
+    Instantiates a new simulation from a parsed experiment file
+    */
     public peatlandSimulation(String[] paramList, String[] options,  String myOut){
        String name = paramList[0];
        int xmax = Integer.parseInt(paramList[1]);
@@ -71,6 +76,12 @@ class peatlandSimulation {
        
     }
     
+    /*
+    Runs the simulation from year zero to the max number of years
+    with a given number of days per year (double loop)
+    Executes all the calculations necessary to change individuals
+    Outputs a summary of parameters, and the initial configuration
+    */
     public void runSimulation() throws IOException{
         createFolder(outputFolder, simName);
         System.out.println(simName);
@@ -91,6 +102,10 @@ class peatlandSimulation {
         //this.getData().dataOutput(simName, curYear, outputFolder);
     }
     
+    /*
+    This runs a simulation from year zero until the specified species is extinct or the 
+    max number of years has been reached. 
+    */
     public void runUntilExtinction(boolean forAmp, int maxYears) throws IOException {
         this.curYear = 0;
         int dpy = this.getParameters().getGP().getDPY();
@@ -125,19 +140,30 @@ class peatlandSimulation {
 
     }
    
-    
+    /*
+    Calls all the necessary methods that operate daily including competition and
+    spore transfer
+    */
     private void dayTriggers(int day, int daysPerYear){
         this.getData().competeGametos(this.getParameters());
         this.getData().transferSpores(this.getParameters(), day, daysPerYear);
         this.getData().incrementAge();
     }
     
+    /*
+    Calls all the necessary methods that operate yearly including individual class
+    transitions and data output
+    */
     public void yearTriggers() throws IOException{
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
         this.getData().dataOutput(simName, curYear, outputFolder);
     }
     
+    /*
+    Calls all the necessary methods that operate yearly. Offers an opportunity
+    to change the name of the output file
+    */
     public void yearTriggers(String name) throws IOException{
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
@@ -160,8 +186,13 @@ class peatlandSimulation {
         this.params = myParams;
     }
     
-    //Use starting numbers of individuals and dung to produce the empty matrix
+    /*
+    Instantiates a data matrix to represent all of the individuals for quick calculation
+    Parameters represent the number of individuals in immature and mature classes for
+    both species
+    */
     private void generateStartingData(int nGA, int nGP, int nMA, int nMP){
+        
         int nIAD = Math.round(Math.round(params.getGP().getDPY() * params.getGP().getPR()));
         int nRows = nGA + nGP + nMA + nMP + nIAD;
         double[][] sData = new double[nRows][ncols];
@@ -200,6 +231,9 @@ class peatlandSimulation {
         this.getData().calcDistanceMatrix();
     }
     
+    /*
+    Prints to a file a summary of the model parameters used in the simulation
+    */
     public void summarize(PrintStream out){
         
         out.println("kA = " + this.getParameters().getAmp().getK() + 
@@ -208,8 +242,8 @@ class peatlandSimulation {
         out.println("rA = " + this.getParameters().getAmp().getR() + 
                 "\t rP = " + this.getParameters().getPens().getR());
         
-        out.println("a12 = " + this.getParameters().getAmp().getAlpha() + 
-                "\t a21 = " + this.getParameters().getPens().getAlpha());
+        out.println("phenA = " + this.getParameters().getAmp().getPhenology() + 
+                "\t phenP = " + this.getParameters().getPens().getPhenology());
         
         out.println("A Yeild = " + this.getParameters().getAmp().getAY() + 
                 "\t P Yeild = " + this.getParameters().getPens().getAY());
@@ -226,6 +260,9 @@ class peatlandSimulation {
         if(!out.equals(System.out)){ out.close(); }
     }
     
+    /*
+    Creates a new folder with the given name and given parent folder
+    */
     public static void createFolder(String outFolder, String name){
         Path outPath = Paths.get(outFolder, name);
        

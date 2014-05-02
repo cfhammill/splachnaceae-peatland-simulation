@@ -17,7 +17,7 @@ public class sParams {
     private double arealYeild; // Spores delivered per unit mature cover
     private double relativeAttraction; // Maximum attractiveness relative to dung
     private String phenology; //functional representation of phenology
-    private double minViableCoverage = 0.2;
+    private double minViableCoverage = 0.2; //Minimum coverage that allows mating
    
     public sParams(double k, double r, double afc, double arealYeild, double attraction, String phen){
         this.k = k;
