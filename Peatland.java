@@ -34,12 +34,14 @@ public class Peatland {
         if (args.length == 0) {
             
             makeDir(outDir);
+            makeDir(outDir + "collatedResults/");
             manualSim();
             
         } else if (args.length == 1) {
             
             buildExperiments(args[0]);
             makeDir(outDir);
+            makeDir(outDir + "collatedResults/");
             
             for (peatlandSimulation sim : experimentList) {
                 sim.runSimulation();

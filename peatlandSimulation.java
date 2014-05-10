@@ -158,6 +158,7 @@ class peatlandSimulation {
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
         this.getData().dataOutput(simName, curYear, outputFolder);
+        this.getData().collatedDataOutput(simName,outputFolder, curYear);
     }
     
     /*
@@ -168,6 +169,7 @@ class peatlandSimulation {
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
         this.getData().dataOutput(name, curYear, outputFolder);
+        this.getData().collatedDataOutput(simName, outputFolder, curYear);
     }
     
     public simData getData(){

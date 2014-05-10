@@ -44,6 +44,12 @@ public class simData {
     }
 
     /*
+    Instantiate an empty simData object
+    */
+    public simData(){
+    
+    }
+    /*
     Calculate the mean proportional coverage of Ampullaceum within mature populations
     from within data matrix
     */
@@ -82,12 +88,12 @@ public class simData {
     /*
     Outputs the contents of the data matrix to a file for analysis
     */
-    private void writeMatrixToFile(String file, double[][] data) {
+    private void writeMatrixToFile(String file, double[][] data, boolean append) {
         Writer writer = null;
 
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(file), "utf-8"));
+                    new FileOutputStream(file, append), "utf-8"));
 
             int rows = data.length;
             int cols = data[0].length;
@@ -220,14 +226,14 @@ public class simData {
      Write the distance matrix to a comma delimited file with name file
      */
     public void writeDMToFile(String file) {
-        writeMatrixToFile(file, distance);
+        writeMatrixToFile(file, distance, false);
     }
 
     /*
      Output the data to a comma delimited file with name file
      */
     public void writeToFile(String file) {
-        writeMatrixToFile(file, data);
+        writeMatrixToFile(file, data, false);
     }
 
     /*
@@ -391,6 +397,25 @@ public class simData {
 
         String fileName = out + "/" + name + "/" + name + "Year" + year + ".csv";
         writeToFile(fileName);
+    }
+    
+    public void collatedDataOutput(String name, String out, int year) throws IOException {
+    
+        String newOut = out + "/collatedResults/" + name + "collatedResults.csv";
+        double[][] newData = new double[data.length][data[0].length + 1];
+  
+        for(int i = 0; i < data.length; i++){
+            int j;
+            
+            for(j = 0; j < data[0].length; j++){
+                newData[i][j] = data[i][j];
+            }
+            
+            newData[i][j] = year;
+        }
+        
+        
+        writeMatrixToFile(newOut, newData, true);
     }
 
     /*
