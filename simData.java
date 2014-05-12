@@ -20,8 +20,8 @@ public class simData {
      Row 0: Generation (1: gametophyte, 2: mature, 3: dung
      Row 1: Environmental suitability
      Row 2: Age
-     Row 3: X coordinate
-     Row 4: Y coordinate
+     Row 3: Radial coordinate
+     Row 4: Angular coordinate
      Row 5: Cover of Ampullaceum
      Row 6: Cover of Pensylvanicum
      Row 7: Spore Load of Ampullaceum
@@ -202,9 +202,13 @@ public class simData {
 
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data.length; j++) {
-                double dX = data[i][3] - data[j][3];
-                double dY = data[i][4] - data[j][4];
-                distM[i][j] = Math.hypot(dX, dY);
+                double radI = data[i][3];
+                double radJ = data[j][3];
+                double deltaTheta = data[i][4] - data[j][4];
+                
+                //Calculate distance via cosine law
+                distM[i][j] = Math.sqrt(radI*radI + radJ * radJ 
+                        - 2*radI*radJ*Math.cos(deltaTheta));
             }
         }
 
@@ -324,7 +328,7 @@ public class simData {
      Age each individual one day
      */
     public void incrementAge() {
-        for (int i = 0; i < data.length; i++) {
+        for(int i = 0; i < data.length; i++) {
             data[i][2]++;
         }
     }
@@ -431,8 +435,8 @@ public class simData {
             sData[0] = 3;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = 0;
             sData[6] = 0;
             sData[7] = 0;
@@ -441,8 +445,8 @@ public class simData {
             sData[0] = 3;
             sData[1] = 0;
             sData[2] = -rand.nextInt(sp.getGP().getDPY());
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = 0;
             sData[6] = 0;
             sData[7] = 0;
@@ -464,8 +468,8 @@ public class simData {
             sData[0] = 1;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = sp.getAmp().getK();
             sData[6] = 0;
             sData[7] = 0;
@@ -474,8 +478,8 @@ public class simData {
             sData[0] = 1;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = 0;
             sData[6] = sp.getPens().getK();
             sData[7] = 0;
@@ -497,8 +501,8 @@ public class simData {
             sData[0] = 2;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = sp.getAmp().getK();
             sData[6] = 0;
             sData[7] = 0;
@@ -507,8 +511,8 @@ public class simData {
             sData[0] = 2;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextInt(sp.getGP().getSize()[0]);
-            sData[4] = rand.nextInt(sp.getGP().getSize()[1]);
+            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = rand.nextDouble() * 2 * Math.PI;
             sData[5] = 0;
             sData[6] = sp.getPens().getK();
             sData[7] = 0;

@@ -11,30 +11,26 @@ package peatland;
  * @author chris
  */
 public class generalParams {
-    private int xMax;
-    private int yMax;
+    private double radMax;
     private int daysPerYear;
     private double poopRate;
-    private int area;
+    private double area;
     
     public generalParams(){}
     
-    public generalParams(int xm, int ym, int dpy, double pr){
-        xMax = xm;
-        yMax = ym;
+    public generalParams(double radM, int dpy, double pr){
+        radMax = radM;
         daysPerYear = dpy;
         poopRate = pr;
-        area = xMax * yMax;
+        area = radMax * Math.PI * 2;
     }
     
-    public void setSize(int xm, int ym){
-        xMax = xm;
-        yMax = ym;
+    public double getRadius(){
+        return radMax;
     }
     
-    public int[] getSize(){
-        int[] s = {xMax,yMax};
-        return s;
+    public void setArea(double area){
+        radMax = area / (2 * Math.PI);
     }
     
     public void setDPY(int dpy){
@@ -53,7 +49,7 @@ public class generalParams {
         return poopRate;
     }
     
-    public int getArea(){
+    public double getArea(){
         return area;
     }
 

@@ -70,7 +70,7 @@ public class Peatland {
         Each day adds .3 dung pats at random
         Each year starts with .3 * days per year dung pats
         */   
-     generalParams gp = new generalParams(500,500, 90, .3);
+     generalParams gp = new generalParams(80, 90, .3);
      
      /*
      Generic moss
@@ -106,7 +106,7 @@ public class Peatland {
             
             reader.readLine(); //discard first header
             
-            globalParams = reader.readLine().split("[;\t]");
+            globalParams = reader.readLine().split("[,;\t]");
             outDir = globalParams[2].replace("\"","");
             
             reader.readLine();
@@ -117,7 +117,7 @@ public class Peatland {
             //Reads in up to 100 experiments with 18 parameter values
             while(reader.ready()){
                 String line = reader.readLine();
-                String[] paramVals = line.split("[;\t]");
+                String[] paramVals = line.split("[,;\t]");
                 experimentList.add(new peatlandSimulation(paramVals, globalParams, outDir));
             }
             

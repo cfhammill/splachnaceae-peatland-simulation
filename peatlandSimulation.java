@@ -45,8 +45,8 @@ class peatlandSimulation {
     */
     public peatlandSimulation(String[] paramList, String[] options,  String myOut){
        String name = paramList[0];
-       int xmax = Integer.parseInt(paramList[1]);
-       int ymax = Integer.parseInt(paramList[2]);
+       double radMax = Double.parseDouble(paramList[1]);
+       //int ymax = Integer.parseInt(paramList[2]);
        int dpy = Integer.parseInt(paramList[3]);
        double poopRate = Double.parseDouble(paramList[4]);
        double kA = Double.parseDouble(paramList[5]);
@@ -64,7 +64,7 @@ class peatlandSimulation {
        int y = Integer.parseInt(paramList[17]);
        
        
-       generalParams gp = new generalParams(xmax, ymax, dpy, poopRate);
+       generalParams gp = new generalParams(radMax, dpy, poopRate);
        sParams amp = new sParams(kA,rA, alphaAP, yA, aA, phenA);
        sParams pens = new sParams(kP, rP, alphaPA, yP, aP, phenP);
        this.params = new simParams(gp, amp, pens);
@@ -253,8 +253,8 @@ class peatlandSimulation {
         out.println("A Relative Attraction = " + this.getParameters().getAmp().getAttraction() + 
                 "\t P Relative Attraction = " + this.getParameters().getPens().getAttraction());
         
-        out.println("Size = " + this.getParameters().getGP().getSize()[0] + 
-                " x " + this.getParameters().getGP().getSize()[1]);
+        out.println("Size = " + this.getParameters().getGP().getRadius() + 
+                " radius " + this.getParameters().getGP().getArea());
         
         out.println("Daily Dung Deposition Proportion = " + this.getParameters().getGP().getPR());
         out.println("Year length = " + this.getParameters().getGP().getDPY());
