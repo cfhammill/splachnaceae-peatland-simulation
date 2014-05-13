@@ -87,7 +87,7 @@ class peatlandSimulation {
         System.out.println(simName);
         
         this.curYear = 0;
-        this.getData().dataOutput(simName, curYear, outputFolder);
+        //this.getData().dataOutput(simName, curYear, outputFolder);
         this.summarize(new PrintStream(outputFolder + "/" + simName + "/" + simName + "SimulationSummary.txt"));
         
         int dpy = this.getParameters().getGP().getDPY();
@@ -114,7 +114,7 @@ class peatlandSimulation {
         if (forAmp) {
             name += "AmpExtinct";
             createFolder(outputFolder, name);
-            this.getData().dataOutput(name, curYear, outputFolder);
+            //this.getData().dataOutput(name, curYear, outputFolder);
             this.summarize(new PrintStream(outputFolder + "/" + name + "/" + name + "SimulationSummary.txt"));
 
             while (this.getData().getMeanAmp() > 0 && curYear < 5000) {
@@ -126,7 +126,7 @@ class peatlandSimulation {
         } else {
             name += "PensExtinct";
             createFolder(outputFolder, name);
-            this.getData().dataOutput(name, curYear, outputFolder);
+            //this.getData().dataOutput(name, curYear, outputFolder);
             this.summarize(new PrintStream(outputFolder + "/" + name + "/" + name + "SimulationSummary.txt"));
 
             while (this.getData().getMeanAmp() > 0 && curYear < 5000) {
@@ -157,7 +157,7 @@ class peatlandSimulation {
     public void yearTriggers() throws IOException{
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
-        this.getData().dataOutput(simName, curYear, outputFolder);
+        //this.getData().dataOutput(simName, curYear, outputFolder);
         this.getData().collatedDataOutput(simName,outputFolder, curYear);
     }
     
@@ -168,7 +168,7 @@ class peatlandSimulation {
     public void yearTriggers(String name) throws IOException{
         this.getData().processTransitions(this.getParameters());
         this.curYear++;
-        this.getData().dataOutput(name, curYear, outputFolder);
+        //this.getData().dataOutput(name, curYear, outputFolder);
         this.getData().collatedDataOutput(simName, outputFolder, curYear);
     }
     
