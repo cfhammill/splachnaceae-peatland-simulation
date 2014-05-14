@@ -347,7 +347,7 @@ public class simData {
      Perform all the transitions involved in turning dung to gametophyte,
      gametophyte to matures and adding new dung for the next year
      */
-    public void processTransitions(simParams sp) {
+    public void processTransitions(simParams sp, spatialAggregator sa) {
         int dpy = sp.getGP().getDPY();
         double pr = sp.getGP().getPR();
 
@@ -385,7 +385,7 @@ public class simData {
         */
         
         for (int k = keep; k < (keep + newIAD); k++) {
-            newData[k] = newDung(false, sp);
+            newData[k] = newDung(false, sp, sa);
         }
 
         keep += newIAD;

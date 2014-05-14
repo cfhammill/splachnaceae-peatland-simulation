@@ -152,8 +152,8 @@ class peatlandSimulation {
     spore transfer
     */
     private void dayTriggers(int day, int daysPerYear){
-        this.getData().competeGametos(this.getParameters());
-        this.getData().transferSpores(this.getParameters(), day, daysPerYear);
+        this.getData().competeGametos(params);
+        this.getData().transferSpores(params, day, daysPerYear);
         this.getData().incrementAge();
     }
     
@@ -162,7 +162,7 @@ class peatlandSimulation {
     transitions and data output
     */
     public void yearTriggers() throws IOException{
-        this.getData().processTransitions(this.getParameters());
+        this.getData().processTransitions(params, aggregator);
         this.curYear++;
         //this.getData().dataOutput(simName, curYear, outputFolder);
         this.getData().collatedDataOutput(simName,outputFolder, curYear);
@@ -173,7 +173,7 @@ class peatlandSimulation {
     to change the name of the output file
     */
     public void yearTriggers(String name) throws IOException{
-        this.getData().processTransitions(this.getParameters());
+        this.getData().processTransitions(params, aggregator);
         this.curYear++;
         //this.getData().dataOutput(name, curYear, outputFolder);
         this.getData().collatedDataOutput(simName, outputFolder, curYear);

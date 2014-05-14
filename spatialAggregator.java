@@ -27,12 +27,11 @@ public class spatialAggregator {
         this.params = sp;
         
         aggregationCentres = new double[nAggregationCentres][2];
-        double radiusMax = sp.getGP().getRadius();
-        
         
         for(int i = 0; i < nAggregationCentres; i++){
             aggregationCentres[i][0] = enRand.nextDouble() * sp.getGP().getRadius();
             aggregationCentres[i][1] = enRand.nextRadialAngle();
+            System.out.println(aggregationCentres[i][0] + " " + aggregationCentres[i][1]);
         }
     }
     
@@ -59,13 +58,17 @@ public class spatialAggregator {
                 } 
                 
                 double l = Math.sqrt(lc * lc + lfc * lfc - 2 * lc * lfc * Math.cos(thetafc));
-                double theta = Math.acos((lc * lc + lfc * lfc - l * l)/(2 * lc * lfc));
+                double theta = Math.acos((l * l + lc * lc - lfc * lfc)/(2 * lc * l));
                 
                 newCoords[0] = l;
                 
                 if(thetafc < Math.PI){
+                    if((thetac + theta) > 2 * Math.PI){thetac = thetac - 2 * Math.PI;}
+                    
                  newCoords[1] = thetac + theta;
                 } else {
+                    if((thetac - theta) < 0){thetac = thetac + 2 * Math.PI;}
+                    
                  newCoords[1] = thetac - theta;
                 }
                 
