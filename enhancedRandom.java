@@ -26,14 +26,14 @@ public class enhancedRandom extends Random{
         for(int i = 0; i < nVals;  i++){
            
            double u = -uMax + i * step;
-           double pr = biweightIntegral(u, uMax);
+           double pr = biweightIntegral(u);
 
            biweightTable[i][0] = u;
            biweightTable[i][1] = pr;
         }
     }
     
-    private double biweightIntegral(double u, double uMax){
+    private double biweightIntegral(double u){
        return u * (3 * Math.pow(u,4) - 10 * Math.pow(u,2) + 15)/16 + .5;
     }
     
@@ -46,6 +46,10 @@ public class enhancedRandom extends Random{
             i++;
         }
         
-        return biweightTable[i][0];
+        return Math.abs(biweightTable[i][0]);
+    }
+    
+    public double nextRadialAngle(){
+        return nextDouble() * 2 * Math.PI;
     }
 }

@@ -11,7 +11,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,17 +26,22 @@ class peatlandSimulation {
     private String simName;
     private String outputFolder;
     private int ncols = 9;
+    private spatialAggregator aggregator;
    
     /*
     Instantiates a new simulation given all the simulation parameters manually
     */
-    public peatlandSimulation(String myName, simData myData, simParams myParams, String myOut, int y){
+    public peatlandSimulation(String myName, simData myData, simParams myParams, 
+                              String myOut, int y, String aggregationMethod,
+                              int nAggregationCentres, double agStrength){
            data = myData;
            params = myParams;
            simName = myName;
            outputFolder = myOut;
            years = y;
-           this.generateStartingData(10, 10, 10, 10);
+           aggregator = new spatialAggregator(aggregationMethod, nAggregationCentres, agStrength, params);
+           
+           this.generateStartingData(10, 10, 10, 10, aggregator);
      }
     
     /*
@@ -46,33 +50,36 @@ class peatlandSimulation {
     public peatlandSimulation(String[] paramList, String[] options,  String myOut){
        String name = paramList[0];
        double radMax = Double.parseDouble(paramList[1]);
-       //int ymax = Integer.parseInt(paramList[2]);
-       int dpy = Integer.parseInt(paramList[3]);
-       double poopRate = Double.parseDouble(paramList[4]);
-       double kA = Double.parseDouble(paramList[5]);
-       double rA = Double.parseDouble(paramList[6]);
-       double alphaAP = Double.parseDouble(paramList[7]);
-       double yA = Double.parseDouble(paramList[8]);
-       double aA = Double.parseDouble(paramList[9]);
-       String phenA = paramList[10];
-       double kP = Double.parseDouble(paramList[11]);
-       double rP = Double.parseDouble(paramList[12]);
-       double alphaPA = Double.parseDouble(paramList[13]);
-       double yP = Double.parseDouble(paramList[14]);
-       double aP = Double.parseDouble(paramList[15]);
-       String phenP = paramList[16];
-       int y = Integer.parseInt(paramList[17]);
+       String aggregationMethod = paramList[2];
+       int nAggregationCentres = Integer.parseInt(paramList[3]);
+       double agStrength = Double.parseDouble(paramList[4]);
+       int dpy = Integer.parseInt(paramList[5]);
+       double poopRate = Double.parseDouble(paramList[6]);
+       double kA = Double.parseDouble(paramList[7]);
+       double rA = Double.parseDouble(paramList[8]);
+       double alphaAP = Double.parseDouble(paramList[9]);
+       double yA = Double.parseDouble(paramList[10]);
+       double aA = Double.parseDouble(paramList[11]);
+       String phenA = paramList[12];
+       double kP = Double.parseDouble(paramList[13]);
+       double rP = Double.parseDouble(paramList[14]);
+       double alphaPA = Double.parseDouble(paramList[15]);
+       double yP = Double.parseDouble(paramList[16]);
+       double aP = Double.parseDouble(paramList[17]);
+       String phenP = paramList[18];
+       int y = Integer.parseInt(paramList[19]);
        
        
        generalParams gp = new generalParams(radMax, dpy, poopRate);
        sParams amp = new sParams(kA,rA, alphaAP, yA, aA, phenA);
        sParams pens = new sParams(kP, rP, alphaPA, yP, aP, phenP);
        this.params = new simParams(gp, amp, pens);
+       this.aggregator = new spatialAggregator(aggregationMethod, nAggregationCentres, agStrength, params);
        this.years  = y;
        this.outputFolder = myOut;
        this.simName = name;
        
-       this.generateStartingData(10, 10, 10, 10);
+       this.generateStartingData(10, 10, 10, 10, aggregator);
        
     }
     
@@ -193,44 +200,97 @@ class peatlandSimulation {
     Parameters represent the number of individuals in immature and mature classes for
     both species
     */
-    private void generateStartingData(int nGA, int nGP, int nMA, int nMP){
+    private void generateStartingData(int nGA, int nGP, 
+            int nMA, int nMP, spatialAggregator ag){
         
-        int nIAD = Math.round(Math.round(params.getGP().getDPY() * params.getGP().getPR()));
-        int nRows = nGA + nGP + nMA + nMP + nIAD;
-        double[][] sData = new double[nRows][ncols];
-        Random rand = new Random();
-        simParams sp = this.getParameters();
         
-        for(int i = 0; i < nRows; i++){
-            boolean isGA = i < nGA;
-            boolean isGP = i >= nGA && i < (nGA + nGP);
-            boolean isMA = i >= (nGP + nGA) && i < (nGA + nGP + nMA);
-            boolean isMP = i >= (nGA + nGP + nMA) && i < (nGA + nGP + nMA + nMP);
-            boolean isIAD = i >= (nGA + nGP + nMA + nMP);
-                    
-            if(isGA) {
-                sData[i] = simData.newGameto(true, sp);
-            }
-            
-            if(isGP) {
-                sData[i] = simData.newGameto(false, sp);
-            }
-            
-            if(isMA) {
-                sData[i] = simData.newMature(true, sp);
-            }
-            
-            if(isMP) {
-                sData[i] = simData.newMature(false, sp);
-            }
-             
-            if(isIAD) {
-                sData[i] = simData.newDung(false, sp);
-            }
+        double[][] sData;
+        boolean isAggregated = !ag.getAggregationMethod().equals("none");
+        
+        if(isAggregated){
+           sData = generateAggregatedStartingData(nGA, nGP, nMA, nMP, ag);
+        } else {
+           sData = generateUnaggregatedStartingData(nGA, nGP, nMA, nMP);
         }
-        
+
         this.setData(new simData(sData));
         this.getData().calcDistanceMatrix();
+    }
+    
+    private double[][] generateUnaggregatedStartingData(int nGA, int nGP, int nMA, int nMP){
+
+            int nIAD = Math.round(Math.round(params.getGP().getDPY() * params.getGP().getPR()));
+            int nRows = nGA + nGP + nMA + nMP + nIAD;
+            double[][] sData = new double[nRows][ncols];
+            simParams sp = this.getParameters();
+
+            for(int i = 0; i < nRows; i++){
+                boolean isGA = i < nGA;
+                boolean isGP = i >= nGA && i < (nGA + nGP);
+                boolean isMA = i >= (nGP + nGA) && i < (nGA + nGP + nMA);
+                boolean isMP = i >= (nGA + nGP + nMA) && i < (nGA + nGP + nMA + nMP);
+                boolean isIAD = i >= (nGA + nGP + nMA + nMP);
+
+                if(isGA) {
+                    sData[i] = simData.newGameto(true, sp);
+                }
+
+                if(isGP) {
+                    sData[i] = simData.newGameto(false, sp);
+                }
+
+                if(isMA) {
+                    sData[i] = simData.newMature(true, sp);
+                }
+
+                if(isMP) {
+                    sData[i] = simData.newMature(false, sp);
+                }
+
+                if(isIAD) {
+                    sData[i] = simData.newDung(false, sp);
+                }
+            }
+
+            return sData;
+    }
+    
+    private double[][] generateAggregatedStartingData(int nGA, int nGP, int nMA, int nMP, spatialAggregator ag){
+        
+            int nIAD = Math.round(Math.round(params.getGP().getDPY() * params.getGP().getPR()));
+            int nRows = nGA + nGP + nMA + nMP + nIAD;
+            double[][] sData = new double[nRows][ncols];
+            simParams sp = this.getParameters();
+
+            for(int i = 0; i < nRows; i++){
+                boolean isGA = i < nGA;
+                boolean isGP = i >= nGA && i < (nGA + nGP);
+                boolean isMA = i >= (nGP + nGA) && i < (nGA + nGP + nMA);
+                boolean isMP = i >= (nGA + nGP + nMA) && i < (nGA + nGP + nMA + nMP);
+                boolean isIAD = i >= (nGA + nGP + nMA + nMP);
+
+                if(isGA) {
+                    sData[i] = simData.newGameto(true, sp, ag);
+                }
+
+                if(isGP) {
+                    sData[i] = simData.newGameto(false, sp, ag);
+                }
+
+                if(isMA) {
+                    sData[i] = simData.newMature(true, sp, ag);
+                }
+
+                if(isMP) {
+                    sData[i] = simData.newMature(false, sp, ag);
+                }
+
+                if(isIAD) {
+                    sData[i] = simData.newDung(false, sp, ag);
+                }
+            }
+
+            return sData;
     }
     
     /*

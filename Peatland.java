@@ -89,7 +89,7 @@ public class Peatland {
      
      simData sd = new simData();
      
-     peatlandSimulation run1 = new peatlandSimulation("Generic", sd, sp, outDir, 5);
+     peatlandSimulation run1 = new peatlandSimulation("Generic", sd, sp, outDir, 5, "none", 1, 0);
      
      run1.runSimulation();
      

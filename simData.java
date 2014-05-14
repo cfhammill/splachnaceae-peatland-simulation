@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Random;
 
 
 public class simData {
@@ -33,6 +32,10 @@ public class simData {
      the distance is calculated as euclidean distance
      */
     private double[][] distance;
+    
+    private double[][] aggregationCentres;
+    
+    private static final enhancedRandom enRand = new enhancedRandom();
 
     /*
     Instantiating a simData with a matrix of peatland values
@@ -429,14 +432,13 @@ public class simData {
      */
     public static double[] newDung(boolean isActive, simParams sp) {
         double[] sData = new double[9];
-        Random rand = new Random();
 
         if (isActive) {
             sData[0] = 3;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
             sData[5] = 0;
             sData[6] = 0;
             sData[7] = 0;
@@ -444,9 +446,9 @@ public class simData {
         } else {
             sData[0] = 3;
             sData[1] = 0;
-            sData[2] = -rand.nextInt(sp.getGP().getDPY());
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[2] = -enRand.nextInt(sp.getGP().getDPY());
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
             sData[5] = 0;
             sData[6] = 0;
             sData[7] = 0;
@@ -462,14 +464,13 @@ public class simData {
      */
     public static double[] newGameto(boolean isAmpullaceum, simParams sp) {
         double[] sData = new double[9];
-        Random rand = new Random();
 
         if (isAmpullaceum) {
             sData[0] = 1;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
             sData[5] = sp.getAmp().getK();
             sData[6] = 0;
             sData[7] = 0;
@@ -478,8 +479,8 @@ public class simData {
             sData[0] = 1;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
             sData[5] = 0;
             sData[6] = sp.getPens().getK();
             sData[7] = 0;
@@ -495,14 +496,13 @@ public class simData {
      */
     public static double[] newMature(boolean isAmpullaceum, simParams sp) {
         double[] sData = new double[9];
-        Random rand = new Random();
 
         if (isAmpullaceum) {
             sData[0] = 2;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
             sData[5] = sp.getAmp().getK();
             sData[6] = 0;
             sData[7] = 0;
@@ -511,8 +511,105 @@ public class simData {
             sData[0] = 2;
             sData[1] = 0;
             sData[2] = 0;
-            sData[3] = rand.nextDouble() * sp.getGP().getRadius();
-            sData[4] = rand.nextDouble() * 2 * Math.PI;
+            sData[3] = enRand.nextDouble() * sp.getGP().getRadius();
+            sData[4] = enRand.nextRadialAngle();
+            sData[5] = 0;
+            sData[6] = sp.getPens().getK();
+            sData[7] = 0;
+            sData[8] = 0;
+        }
+
+        return sData;
+    }
+    
+        /*
+     Generate a new dung pat with age 0 if it is active, or a random
+     negative number indicating days until activation, simulating
+     random deposition.
+     */
+    public static double[] newDung(boolean isActive, simParams sp, spatialAggregator sa) {
+        double[] sData = new double[9];
+
+        if (isActive) {
+            sData[0] = 3;
+            sData[1] = 0;
+            sData[2] = 0;
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
+            sData[5] = 0;
+            sData[6] = 0;
+            sData[7] = 0;
+            sData[8] = 0;
+        } else {
+            sData[0] = 3;
+            sData[1] = 0;
+            sData[2] = -enRand.nextInt(sp.getGP().getDPY());
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
+            sData[5] = 0;
+            sData[6] = 0;
+            sData[7] = 0;
+            sData[8] = 0;
+        }
+
+        return sData;
+    }
+
+    /*
+     Generate a new gametophyte population with complete amp or pens
+     coverage
+     */
+    public static double[] newGameto(boolean isAmpullaceum, simParams sp, spatialAggregator sa) {
+        double[] sData = new double[9];
+
+        if (isAmpullaceum) {
+            sData[0] = 1;
+            sData[1] = 0;
+            sData[2] = 0;
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
+            sData[5] = sp.getAmp().getK();
+            sData[6] = 0;
+            sData[7] = 0;
+            sData[8] = 0;
+        } else {
+            sData[0] = 1;
+            sData[1] = 0;
+            sData[2] = 0;
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
+            sData[5] = 0;
+            sData[6] = sp.getPens().getK();
+            sData[7] = 0;
+            sData[8] = 0;
+        }
+
+        return sData;
+    }
+
+    /*
+     Generate a new mature moss population with either complete amp or pens
+     coverage
+     */
+    public static double[] newMature(boolean isAmpullaceum, simParams sp, spatialAggregator sa) {
+        double[] sData = new double[9];
+
+        if (isAmpullaceum) {
+            sData[0] = 2;
+            sData[1] = 0;
+            sData[2] = 0;
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
+            sData[5] = sp.getAmp().getK();
+            sData[6] = 0;
+            sData[7] = 0;
+            sData[8] = 0;
+        } else {
+            sData[0] = 2;
+            sData[1] = 0;
+            sData[2] = 0;
+            sData[3] = sa.generateAggregatedPoint()[0];
+            sData[4] = sa.generateAggregatedPoint()[1];
             sData[5] = 0;
             sData[6] = sp.getPens().getK();
             sData[7] = 0;
