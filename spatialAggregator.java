@@ -31,7 +31,6 @@ public class spatialAggregator {
         for(int i = 0; i < nAggregationCentres; i++){
             aggregationCentres[i][0] = enRand.nextDouble() * sp.getGP().getRadius();
             aggregationCentres[i][1] = enRand.nextRadialAngle();
-            System.out.println(aggregationCentres[i][0] + " " + aggregationCentres[i][1]);
         }
     }
     

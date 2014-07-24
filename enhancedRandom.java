@@ -21,13 +21,13 @@ public class enhancedRandom extends Random{
     private void fillBiweightTable(double uMax, int nVals){
         biweightTable = new double[nVals][2];
         uMax = Math.abs(uMax);
-        double step = 2*uMax / (nVals - 1);
+        double step = 2 * uMax / (nVals - 1);
         
         for(int i = 0; i < nVals;  i++){
            
            double u = -uMax + i * step;
            double pr = biweightIntegral(u);
-
+           
            biweightTable[i][0] = u;
            biweightTable[i][1] = pr;
         }

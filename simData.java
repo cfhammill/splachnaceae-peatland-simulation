@@ -33,8 +33,6 @@ public class simData {
      */
     private double[][] distance;
     
-    private double[][] aggregationCentres;
-    
     private static final enhancedRandom enRand = new enhancedRandom();
 
     /*
@@ -385,7 +383,11 @@ public class simData {
         */
         
         for (int k = keep; k < (keep + newIAD); k++) {
-            newData[k] = newDung(false, sp, sa);
+            if(sa.getAggregationMethod().equals("none")){
+                newData[k] = newDung(false, sp);
+            } else {
+                newData[k] = newDung(false, sp, sa);
+            }
         }
 
         keep += newIAD;
