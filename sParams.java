@@ -25,7 +25,7 @@ public class sParams {
         this.alphaFromCompetitor = afc;
         this.arealYeild = arealYeild;
         this.relativeAttraction = attraction;
-        this.phenology = phen;
+        this.phenology = phen;    
     }
     
     public double getMVC(){

@@ -304,9 +304,15 @@ public class simData {
 
                 double dist = distance[myMoss][myDung];
                 
+                /*Old equation with inverse square kernel
                 double aContribution = data[myMoss][5] * ampPhenologyModifier * attractionFromAmp * ampYeild / (dist * dist); //*(dungAge+1));
                 double pContribution = data[myMoss][6] * pensPhenologyModifier * attractionFromPens * pensYeild / (dist * dist); //*(dungAge+1));
-
+                */
+                
+                //Remember to refactor to remove 30 as a magic number
+                double aContribution = data[myMoss][5] * ampPhenologyModifier * attractionFromAmp * ampYeild / Math.exp(dist / 30); 
+                double pContribution = data[myMoss][6] * pensPhenologyModifier * attractionFromPens * pensYeild / Math.exp(dist /30);
+                
                 /*
                 Calculates an individual moss's spore contribution for both species
                 minViable coverage precludes reproduction below a given coverage
@@ -678,6 +684,11 @@ public class simData {
          shifts them up by one to keep them positive or zero, divides by two to limit amplitude
          to 1
          */
+        if(phenology.substring(0,1).matches("\\d")){
+            double dayOffset = Double.parseDouble(phenology);
+            return (Math.cos(2 * Math.PI * (day - dayOffset) / daysPerYear) + 1) / 2;
+        }
+       
         if (phenology.equals("cos")) {
             return (Math.cos(2 * Math.PI * day / daysPerYear) + 1) / 2;
         }
