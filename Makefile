@@ -21,7 +21,8 @@ peatland.jar: classes
 
 default: classes
 
-classes: $(CLASSES:.java=.class)
+classes:
+	$(CLASSES:.java=.class)
 
 clean:
 	$(RM) classes/*.class
