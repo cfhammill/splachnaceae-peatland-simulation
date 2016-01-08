@@ -4,7 +4,7 @@
  * output choices,
  */
 
-package peatland;
+
 
 import java.io.IOException;
 import java.io.PrintStream;

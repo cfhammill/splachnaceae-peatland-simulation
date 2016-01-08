@@ -3,8 +3,6 @@
  * island of newfoundland. It is an individual based model used to examine
  * population dynamics
  */
-package peatland;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -98,7 +96,7 @@ public class Peatland {
  }
  
    private static void buildExperiments(String file) throws UnsupportedEncodingException, IOException{
-        experimentList  = new ArrayList<>();
+        experimentList  = new ArrayList<peatlandSimulation>();
         
        
         try {
