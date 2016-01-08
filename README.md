@@ -9,6 +9,6 @@ command line argument
 ```
 git clone https://github.com/cfhammill/splachnaceae-peatland-simulation
 cd splachnaceae-peatland-simulation
-make peatland.jar
+make #or make peatland.jar
 java -jar peatland.jar experiment_file.csv
 ```

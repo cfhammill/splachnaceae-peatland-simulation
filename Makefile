@@ -19,10 +19,9 @@ CLASSES = \
 peatland.jar: classes
 	jar -cfe peatland.jar Peatland -C classes .
 
-default: classes
+default: peatland.jar
 
-classes:
-	$(CLASSES:.java=.class)
+classes: $(CLASSES:.java=.class)
 
 clean:
 	$(RM) classes/*.class
